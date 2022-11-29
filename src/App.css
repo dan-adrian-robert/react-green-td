@@ -36,3 +36,10 @@
     transform: rotate(360deg);
   }
 }
+
+.mainView {
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
