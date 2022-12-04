@@ -1,5 +1,6 @@
 import {UI_CANVAS_CONFIG} from "../config/globals";
 import {Sprite} from "pixi.js";
+import {getTilePosition} from "./tileUtils";
 
 export const AStar = {
     init: (grid: Matrix) => {
@@ -11,7 +12,6 @@ export const AStar = {
                 node.f = 0;
                 node.g = 0;
                 node.h = 0;
-                node.debug = "";
                 node.parent = null;
                 node.walkable = grid[x][y].walkable;
                 const position = grid[x][y].sprite.position;
@@ -19,6 +19,7 @@ export const AStar = {
                     x: position.x,
                     y: position.y
                 }
+                node.ap = getTilePosition(node,UI_CANVAS_CONFIG.size * 2)
                 row.push(node);
             }
             result.push(row);
@@ -57,8 +58,6 @@ export const AStar = {
 
             closedList.push(currentNode);
             let neighbors = AStar.neighbors(grid, currentNode);
-
-            console.log(neighbors);
 
             // gaseste un nod intr-o lista;
             // findGraphNode
@@ -179,10 +178,13 @@ export const mapTileMapToGrid = (tileMap: any) => {
     for (let i = 0; i < rows; i++) {
         const row = [];
         for (let j = 0; j <cols; j++) {
-            const c1 = tileMap[i][j];
-            const c2 = tileMap[i][j+1];
-            const c3 = tileMap[i+1][j+1];
-            const c4 = tileMap[i+1][j+1];
+            const bi = i * 2;
+            const bj = j * 2;
+
+            const c1 = tileMap[bi][bj];
+            const c2 = tileMap[bi][bj+1];
+            const c3 = tileMap[bi+1][bj+1];
+            const c4 = tileMap[bi+1][bj+1];
 
             const {x, y} = tileMap[i][j].sprite.position
             const mergedCell = {

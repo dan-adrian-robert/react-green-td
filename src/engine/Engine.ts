@@ -3,7 +3,7 @@ import {Sprite} from 'pixi.js'
 import {ConfigUiData} from "../types/types";
 import {UI_CANVAS_CONFIG} from "../config/globals";
 import {GameMap} from "../entities/GameMap";
-import {AStar, mapPointToSmallGrid, mapTileMapToGrid, Node, Point} from "../utils/pathfinder";
+import {AStar, mapPointToSmallGrid, mapTileMapToGrid, Point} from "../utils/pathfinder";
 import {Mob} from "../entities/Mob";
 import {ANIMATION_CONFIG_RECORD, MOB_TEXTURE_MAP, MOB_TYPE} from "../types/mobs.types";
 import {MobSystem} from "../system/MobSystem";
@@ -70,15 +70,23 @@ export namespace Engine {
     }
 
     export const addMob = () => {
-        const checkPoint: Point = Engine.getGameMap().path[0];
+        const checkPoint: Point = {x: 0, y: 64};
         const textureMap: ANIMATION_CONFIG_RECORD = mobTextureMap[MOB_TYPE.OGRE];
 
         const sprite: Sprite = new Sprite(textureMap.WALK_RIGHT[0]);
         sprite.position = checkPoint;
 
+        const graphics = new PIXI.Graphics();
+        const {x, y} = checkPoint;
+
+        graphics.beginFill(0xFFFF00);
+        graphics.lineStyle(5, 0xFF0000);
+        graphics.drawRect(x, y, 4, 4);
+        sprite.addChild(graphics);
+
         const nextCheckPoint: Point = Engine.getGameMap().path[1];
 
-        const mob: Mob = new Mob(sprite, nextCheckPoint, MOB_TYPE.OGRE);
+        const mob: Mob = new Mob(sprite, nextCheckPoint, MOB_TYPE.OGRE, 0);
         mobList.push(mob);
         app.stage.addChild(mob.sprite);
     }
@@ -198,8 +206,9 @@ export namespace Engine {
             return [];
         }
 
+
         const result = AStar.search(grid, startNode, endNode);
-        console.log(result);
+
 
         return result.map(item => item.pos);
     }
@@ -211,7 +220,7 @@ export namespace Engine {
 
             graphics.beginFill(0xFFFF00);
             graphics.lineStyle(5, 0xFF0000);
-            graphics.drawRect(x + 14, y+ 14, 4, 4);
+            graphics.drawRect(x + UI_CANVAS_CONFIG.size, y + UI_CANVAS_CONFIG.size, 4, 4);
             app.stage.addChild(graphics);
             return null;
         })

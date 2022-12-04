@@ -8,6 +8,9 @@ import {ANIMATION_LOOP, GAME_LOOP} from "./system/GameLoop";
 import {onKeyPressed} from "./handlers/KeyHandlers";
 import {exportMapToJson} from "./utils/export.utils";
 
+// @ts-ignore
+window["PIXI"] = PIXI;
+
 function App() {
     const canvasRef: any = React.useRef(null);
     const configCanvasRef: any = React.useRef(null);

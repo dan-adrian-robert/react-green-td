@@ -1,7 +1,7 @@
 import {AssetPaths, ConfigMap} from "../Images";
 import {loadAsset} from "../utils/loaders";
 import {ConfigUiData, SpriteSheetConfig, Tile} from "../types/types";
-import {Sprite, Texture} from "pixi.js";
+import {Container, Sprite, Texture} from "pixi.js";
 import {Engine} from "../engine/Engine";
 import {CANVAS_CONFIG, UI_CANVAS_CONFIG} from "../config/globals";
 import {BuildMobTextureMap, BuildSpecialGui, BuildTileMap, getMobSystemConfig} from "../utils/builders";
@@ -49,10 +49,16 @@ export const BUILD_SYSTEMS = (): void => {
 
          const gameMap: GameMap = Engine.getGameMap();
 
+
+         const mapContainer = new Container();
+         mapContainer.name = 'levelMap';
+
          gameMap.tileMap.map(tileRow => {
-             tileRow.map(tile => Engine.getApp().stage.addChild(tile.sprite));
+             tileRow.map(tile => mapContainer.addChild(tile.sprite));
              return null;
          });
+
+         Engine.getApp().stage.addChild(mapContainer);
 
      } else {
          console.log('did not load data');
@@ -94,10 +100,15 @@ export const BUILD_SYSTEMS = (): void => {
          Engine.setGameMap(new GameMap(tiles));
          const gameMap: GameMap = Engine.getGameMap();
 
+         const mapContainer = new Container();
+         mapContainer.name = 'levelMap';
+
          gameMap.tileMap.map(tileRow => {
-             tileRow.map(tile => Engine.getApp().stage.addChild(tile.sprite));
+             tileRow.map(tile => mapContainer.addChild(tile.sprite));
              return null;
          });
+
+         Engine.getApp().stage.addChild(mapContainer);
      }
 }
 
