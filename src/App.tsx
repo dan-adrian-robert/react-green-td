@@ -7,6 +7,7 @@ import {CANVAS_CONFIG, UI_CANVAS_CONFIG} from "./config/globals";
 import {ANIMATION_LOOP, GAME_LOOP} from "./system/GameLoop";
 import {onKeyPressed} from "./handlers/KeyHandlers";
 import {exportMapToJson} from "./utils/export.utils";
+import {LAYER_NAMES} from "./types/types";
 
 // @ts-ignore
 window["PIXI"] = PIXI;
@@ -17,7 +18,10 @@ function App() {
 
     useEffect(() => {
         Engine.setApp(new PIXI.Application({ width: CANVAS_CONFIG.width, height: CANVAS_CONFIG.height }));
+        Engine.getApp().stage.name = LAYER_NAMES.GameContainer;
         Engine.setConfigApp(new PIXI.Application({ width: UI_CANVAS_CONFIG.width, height: UI_CANVAS_CONFIG.height}));
+
+        // Engine.getConfigApp().stage.name = LAYER_NAMES.EditContainer;
         canvasRef?.current.appendChild(Engine.getApp().view);
         configCanvasRef?.current.appendChild(Engine.getConfigApp().view);
 

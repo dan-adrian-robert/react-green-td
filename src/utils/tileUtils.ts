@@ -1,4 +1,4 @@
-import {Node} from './pathfinder';
+import {Node, Point} from './pathfinder';
 
 export const getTilePosition = (node: Node, tileSize: number) => {
     const col: number = Math.floor(node.pos.x / tileSize);
@@ -13,5 +13,21 @@ export const distanceBetweenPoints = (
     const dx = Math.abs(nodeA.x - nodeB.x);
     const dy = Math.abs(nodeA.y - nodeB.y);
 
- return Math.floor(Math.sqrt(dx ^ 2 + dy ^ 2));
+    return Math.floor(Math.sqrt(dx ^ 2 + dy ^ 2));
+}
+
+export const getDeltaDistance = (nodeA: Point, nodeB: Point): Point => {
+    return {
+        x: Math.abs(nodeA.x - nodeB.x),
+        y: Math.abs(nodeA.y - nodeB.y),
+    }
+}
+
+export const getPointCenter = (checkpoint: Point, halfSize: number):Point => {
+    const {x, y} = checkpoint;
+
+    return {
+        x: x + halfSize,
+        y: y + halfSize,
+    }
 }

@@ -120,16 +120,16 @@ export const AStar = {
         const maxCols = grid[0].length;
 
         const neighbours: {row: number, col: number}[] = [
-            {row: row-1, col: col-1},
+            // {row: row-1, col: col-1},
             {row: row, col: col-1},
-            {row: row+1, col: col-1},
+            // {row: row+1, col: col-1},
 
             {row: row-1, col: col},
             {row: row+1, col: col},
 
-            {row: row-1, col: col+1},
+            // {row: row-1, col: col+1},
             {row: row, col: col+1},
-            {row: row+1, col: col+1},
+            // {row: row+1, col: col+1},
         ]
 
         neighbours.map((point, pointIndex: number) => {

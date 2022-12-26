@@ -1,9 +1,9 @@
 import {AssetPaths, ConfigMap} from "../Images";
 import {loadAsset} from "../utils/loaders";
-import {ConfigUiData, SpriteSheetConfig, Tile} from "../types/types";
+import {ConfigUiData, LAYER_NAMES, SpriteSheetConfig, Tile} from "../types/types";
 import {Container, Sprite, Texture} from "pixi.js";
 import {Engine} from "../engine/Engine";
-import {CANVAS_CONFIG, UI_CANVAS_CONFIG} from "../config/globals";
+import {CANVAS_CONFIG, LAYER_INDEX_MAP, UI_CANVAS_CONFIG} from "../config/globals";
 import {BuildMobTextureMap, BuildSpecialGui, BuildTileMap, getMobSystemConfig} from "../utils/builders";
 import {handleTileClick, handleTileMouseOver} from "../handlers/ClickHandlers";
 import {GameMap} from "../entities/GameMap";
@@ -13,7 +13,6 @@ import {ASSET_NAMES} from "../types/image.types";
 import {MobSystem} from "./MobSystem";
 import {ANIMATION_CONFIG_RECORD, MOB_ANIMATION, MOB_TYPE} from "../types/mobs.types";
 import findPath = Engine.findPath;
-import {MOB_CONFIG} from "../config/mob.config";
 
 export const INIT_ASSETS = async () => {
     const tileMap: Record<string, Texture> = await loadAsset(AssetPaths.TILE_MAP,
@@ -49,19 +48,18 @@ export const BUILD_SYSTEMS = (): void => {
 
          const gameMap: GameMap = Engine.getGameMap();
 
-
          const mapContainer = new Container();
-         mapContainer.name = 'levelMap';
+         mapContainer.name = LAYER_NAMES.MapContainer;
 
          gameMap.tileMap.map(tileRow => {
              tileRow.map(tile => mapContainer.addChild(tile.sprite));
              return null;
          });
 
-         Engine.getApp().stage.addChild(mapContainer);
+         const containerIndex: number = LAYER_INDEX_MAP.MapContainer;
+         Engine.addToGameLayer(mapContainer, containerIndex);
 
      } else {
-         console.log('did not load data');
          const size = UI_CANVAS_CONFIG.size;
          const texture = Engine.getTextureMap()[ASSET_NAMES.TILE_MAP]['t1'];
 
@@ -79,11 +77,11 @@ export const BUILD_SYSTEMS = (): void => {
                  sprite.position = {x: col * size, y: row * size};
                  sprite.interactive = true;
                  sprite.buttonMode = true;
-                 sprite.on('pointerdown', (event) => {
+                 sprite.on('pointerdown', () => {
                      handleTileClick(sprite, {row, col} );
                  })
 
-                 sprite.on('pointerover', (event) => {
+                 sprite.on('pointerover', () => {
                      handleTileMouseOver(sprite, {row, col} );
                  })
 
@@ -101,14 +99,15 @@ export const BUILD_SYSTEMS = (): void => {
          const gameMap: GameMap = Engine.getGameMap();
 
          const mapContainer = new Container();
-         mapContainer.name = 'levelMap';
+         mapContainer.name = LAYER_NAMES.MapContainer;
 
          gameMap.tileMap.map(tileRow => {
              tileRow.map(tile => mapContainer.addChild(tile.sprite));
              return null;
          });
 
-         Engine.getApp().stage.addChild(mapContainer);
+         const containerIndex = LAYER_INDEX_MAP.MapContainer;
+         Engine.addToGameLayer(mapContainer, containerIndex)
      }
 }
 
@@ -121,12 +120,16 @@ const buildConfigUI = () => {
 
         if (startNode && endNode) {
             const path: Array<Point> = findPath();
+
             Engine.getGameMap().path = path;
             Engine.renderPath(path);
         }
 
-        Engine.getApp().stage.addChild(Engine.getGameMap().startNode);
-        Engine.getApp().stage.addChild(Engine.getGameMap().endNode);
+        const mapPathContainer: Container = new Container();
+        mapPathContainer.name = LAYER_NAMES.MapPathContainer;
+        Engine.addToGameLayer(mapPathContainer, LAYER_INDEX_MAP[LAYER_NAMES.MapPathContainer]);
+        mapPathContainer?.addChild(Engine.getGameMap().startNode);
+        mapPathContainer?.addChild(Engine.getGameMap().endNode);
     }
 
     const {spriteList, selectSprite} = BuildTileMap();

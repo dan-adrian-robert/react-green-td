@@ -60,3 +60,15 @@ export type TileLight = {
     w: number,
     t: number
 }
+
+export enum LAYER_NAMES {
+    'EnemyContainer' = 'EnemyContainer',
+    'MapContainer' = 'MapContainer',
+    'MapPathContainer' = 'MapPathContainer',
+    'GameContainer' = 'GameContainer',
+    'EditContainer' = 'EditContainer',
+}
+
+export type GameLayerMap = {
+    [key in LAYER_NAMES]: number
+}

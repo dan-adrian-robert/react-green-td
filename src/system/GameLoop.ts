@@ -5,5 +5,6 @@ export const GAME_LOOP = (delta: number) => {
 
 export const ANIMATION_LOOP = () => {
     Engine.updateTicker();
-    Engine.getMobSystem().moveMobs(Engine.getTicker());
+
+    Engine.getMobSystem()?.applyLogic(Engine.getTicker());
 }

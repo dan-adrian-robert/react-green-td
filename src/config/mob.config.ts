@@ -8,3 +8,10 @@ export const MOB_CONFIG: MOB_ANIMATION_CONFIG = {
         WALK_DOWN: 'ogre_w_down',
     }
 }
+
+export const MOB_CONTAINER_NAME: any = {
+    Enemy : 'Enemy',
+    Center : 'Center',
+    EnemySprite : 'EnemySprite',
+    CheckPoint : 'CheckPoint'
+}

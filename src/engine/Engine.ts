@@ -1,14 +1,19 @@
 import * as PIXI from 'pixi.js'
-import {Sprite} from 'pixi.js'
-import {ConfigUiData} from "../types/types";
-import {UI_CANVAS_CONFIG} from "../config/globals";
+import {Container, Sprite} from 'pixi.js'
+import {ConfigUiData, LAYER_NAMES} from "../types/types";
+import {COLORS, DEBUG_POINTS, LAYER_INDEX_MAP, UI_CANVAS_CONFIG} from "../config/globals";
 import {GameMap} from "../entities/GameMap";
 import {AStar, mapPointToSmallGrid, mapTileMapToGrid, Point} from "../utils/pathfinder";
 import {Mob} from "../entities/Mob";
 import {ANIMATION_CONFIG_RECORD, MOB_TEXTURE_MAP, MOB_TYPE} from "../types/mobs.types";
 import {MobSystem} from "../system/MobSystem";
+import {MOB_CONTAINER_NAME} from "../config/mob.config";
+import { Text } from 'pixi.js';
+import {ITextStyle} from "@pixi/text";
+import {getPointCenter} from "../utils/tileUtils";
 
 export namespace Engine {
+    let enemyContainer: Container;
     let globalTicker: number = 0;
     let loader: PIXI.Loader;
     let app: PIXI.Application;
@@ -70,25 +75,45 @@ export namespace Engine {
     }
 
     export const addMob = () => {
-        const checkPoint: Point = {x: 0, y: 64};
-        const textureMap: ANIMATION_CONFIG_RECORD = mobTextureMap[MOB_TYPE.OGRE];
-
-        const sprite: Sprite = new Sprite(textureMap.WALK_RIGHT[0]);
-        sprite.position = checkPoint;
-
-        const graphics = new PIXI.Graphics();
+        const checkPoint: Point = {x: 0, y: 32};
         const {x, y} = checkPoint;
+        const textureMap: ANIMATION_CONFIG_RECORD = mobTextureMap[MOB_TYPE.OGRE];
+        const mobSize = 64;
 
-        graphics.beginFill(0xFFFF00);
-        graphics.lineStyle(5, 0xFF0000);
-        graphics.drawRect(x, y, 4, 4);
-        sprite.addChild(graphics);
+        const enemyContainer = new Container();
+        enemyContainer.position = checkPoint;
+        enemyContainer.name = MOB_CONTAINER_NAME.Enemy;
 
-        const nextCheckPoint: Point = Engine.getGameMap().path[1];
+        const enemySprite: Sprite = new Sprite(textureMap.WALK_RIGHT[0]);
+        enemySprite.width = mobSize;
+        enemySprite.height = mobSize;
+        enemySprite.name = MOB_CONTAINER_NAME.EnemySprite;
 
-        const mob: Mob = new Mob(sprite, nextCheckPoint, MOB_TYPE.OGRE, 0);
+        const centerPos = new PIXI.Graphics();
+        centerPos.beginFill(COLORS.RED);
+        centerPos.lineStyle(5, COLORS.RED);
+        centerPos.drawRect(x, y, DEBUG_POINTS.pointSize, DEBUG_POINTS.pointSize);
+        centerPos.name = MOB_CONTAINER_NAME.Center;
+
+        const textOption: Partial<ITextStyle> = {
+            fontFamily: 'Arial',
+            fontSize: 24,
+            fill: 0xff1010,
+            align: 'center',
+        }
+        const text = new Text('0');
+        text.style = textOption;
+        text.name = MOB_CONTAINER_NAME.CheckPoint;
+
+        enemyContainer.addChild(enemySprite);
+        enemyContainer.addChild(centerPos);
+        enemyContainer.addChild(text);
+
+        const mob: Mob = new Mob(enemyContainer, MOB_TYPE.OGRE, 0);
         mobList.push(mob);
-        app.stage.addChild(mob.sprite);
+
+        const mobContainer: Container = getGameLayer(LAYER_NAMES.EnemyContainer);
+        mobContainer.addChild(enemyContainer);
     }
 
     export const toggleEditMode = (): void => {
@@ -172,6 +197,12 @@ export namespace Engine {
 
     export const setApp = (newApp: PIXI.Application): void => {
         app = newApp;
+        enemyContainer = new Container();
+        enemyContainer.name = LAYER_NAMES.EnemyContainer;
+
+        const containerIndex = LAYER_INDEX_MAP[LAYER_NAMES.EnemyContainer];
+        console.log('enemyContainer');
+        addToGameLayer(enemyContainer, containerIndex);
     }
 
     export const getApp = (): PIXI.Application => {
@@ -197,8 +228,6 @@ export namespace Engine {
     export const findPath = (): Array<Point> => {
         const grid = AStar.init(mapTileMapToGrid(Engine.getGameMap().tileMap));
 
-        // const grid = AStar.init(Engine.getGameMap().tileMap);
-
         const startNode =  mapPointToSmallGrid(Engine.getGameMap().startNode);
         const endNode =  mapPointToSmallGrid(Engine.getGameMap().endNode);
 
@@ -209,24 +238,52 @@ export namespace Engine {
 
         const result = AStar.search(grid, startNode, endNode);
 
-
         return result.map(item => item.pos);
     }
 
     export const renderPath = (path: Array<Point>) => {
+        const pathContainer = new Container();
+        pathContainer.name = LAYER_NAMES.MapPathContainer;
+
         path.map((item) => {
             const graphics = new PIXI.Graphics();
             const {x, y} = item;
 
-            graphics.beginFill(0xFFFF00);
-            graphics.lineStyle(5, 0xFF0000);
-            graphics.drawRect(x + UI_CANVAS_CONFIG.size, y + UI_CANVAS_CONFIG.size, 4, 4);
-            app.stage.addChild(graphics);
+            const checkPoint: Point = getPointCenter({x,y}, UI_CANVAS_CONFIG.size);
+
+            graphics.beginFill(COLORS.YELLOW);
+            graphics.lineStyle(5, COLORS.YELLOW);
+            graphics.drawRect(checkPoint.x, checkPoint.y , 4, 4);
+            pathContainer.addChild(graphics);
+
             return null;
         })
+
+        app.stage.addChild(pathContainer);
     }
 
     export const spawnMob = () => {
         addMob();
+    }
+
+    export const addToGameLayer = (child: Container, childIndex: number) => {
+        const containerList = Engine.getApp().stage.children;
+        const index = containerList.findIndex((container) => container.name === child.name);
+
+        if( index > -1) {
+            return;
+        }
+
+        if (childIndex >  containerList.length) {
+            while ( containerList.length < childIndex) {
+                Engine.getApp().stage.addChild(new Container());
+            }
+        }
+
+        Engine.getApp().stage.addChildAt(child, childIndex);
+    }
+
+    export const getGameLayer = (name: LAYER_NAMES) => {
+        return Engine.getApp().stage.getChildByName(name) as Container;
     }
 }
