@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import {Container, Sprite} from 'pixi.js'
 import {ConfigUiData, LAYER_NAMES} from "../types/types";
-import {COLORS, DEBUG_POINTS, LAYER_INDEX_MAP, UI_CANVAS_CONFIG} from "../config/globals";
+import {CANVAS_CONFIG, COLORS, DEBUG_POINTS, LAYER_INDEX_MAP, UI_CANVAS_CONFIG} from "../config/globals";
 import {GameMap} from "../entities/GameMap";
 import {AStar, mapPointToSmallGrid, mapTileMapToGrid, Point} from "../utils/pathfinder";
 import {Mob} from "../entities/Mob";
@@ -10,7 +10,11 @@ import {MobSystem} from "../system/MobSystem";
 import {MOB_CONTAINER_NAME} from "../config/mob.config";
 import { Text } from 'pixi.js';
 import {ITextStyle} from "@pixi/text";
-import {getPointCenter} from "../utils/tileUtils";
+import { getPointCenter } from "../utils/tileUtils";
+import {BuildPlace} from "../entities/BuildPlace";
+import {BuildSystem} from "../system/BuildSystem";
+import {exportBuildingsToJson} from "../utils/export.utils";
+import {addBuildingPlaceToScene} from "../utils/buildingPlace.utils";
 
 export namespace Engine {
     let enemyContainer: Container;
@@ -30,10 +34,13 @@ export namespace Engine {
         boxSelectFrame: new PIXI.Sprite(),
         drawMode: false,
         insertMode: false,
+        addTowerMode: false,
     }
 
     let gameMap: GameMap = new GameMap([]);
     let mobList: Array<Mob> = [];
+
+     let buildPlaceList: Array<BuildPlace> = [];
 
     let mobTextureMap: MOB_TEXTURE_MAP = {
         OGRE: {
@@ -45,6 +52,27 @@ export namespace Engine {
     }
 
     let mobsSystem: MobSystem;
+    let buildSystem: BuildSystem = new BuildSystem();
+
+    export const addBuildingPlaceContainer = (bpContainer: Container) => {
+        app.stage.addChild(bpContainer);
+    }
+
+    export const getBuildSystem = (): BuildSystem => {
+        return buildSystem;
+    }
+
+    export const getBuildPlaceList = (): Array<BuildPlace> => {
+        return buildPlaceList;
+    }
+
+    export const addBuildPlace = (buildPlace: BuildPlace): void => {
+        buildPlaceList.push(buildPlace);
+    }
+
+    export const removeBuildPlace = (itemIndex: number): void => {
+        buildPlaceList.splice(itemIndex, 1);
+    }
 
     export const getMobSystem = (): MobSystem => {
         return  mobsSystem;
@@ -116,6 +144,21 @@ export namespace Engine {
         mobContainer.addChild(enemyContainer);
     }
 
+    export const saveBuildingPlaceList = () => {
+        const result = getGameLayer(LAYER_NAMES.TowerPlaceContainer).children;
+
+        const pointList = result ? result.map((item) => {
+            const {x, y} = item.position;
+            return {x, y};
+        }) : [];
+
+        exportBuildingsToJson(pointList);
+    }
+
+    export const logTowerPlace = () => {
+        console.log(Engine.getBuildPlaceList());
+    }
+
     export const toggleEditMode = (): void => {
         configData.drawMode = !configData.drawMode;
     }
@@ -123,6 +166,11 @@ export namespace Engine {
     export const toggleInsertMode = (): void => {
         configData.insertMode = !configData.insertMode;
     }
+
+    export const toggleAddTowerMode = (): void => {
+        configData.addTowerMode = !configData.addTowerMode;
+    }
+
 
     export const getGameMap = (): GameMap => {
         return gameMap;
@@ -137,6 +185,23 @@ export namespace Engine {
             const {row, col} = metadata;
             const selectedSprite: Sprite = configData.tileList[configData.selectedItem];
             gameMap.changeTile(row, col, selectedSprite.texture, true, configData.selectedItem);
+        }
+    }
+
+    export const addTowerPlace = (metadata: any) => {
+        const {row, col} = metadata;
+
+        const maxRows = CANVAS_CONFIG.height/UI_CANVAS_CONFIG.size;
+        const maxCols = CANVAS_CONFIG.width/UI_CANVAS_CONFIG.size;
+
+        if (row + 1 >= maxRows || col + 1 >= maxCols) {
+            return;
+        }
+        const point: Point = {x: col * UI_CANVAS_CONFIG.size, y: row * UI_CANVAS_CONFIG.size}
+        const buildPlaceClickedIndex: number = Engine.getBuildSystem().getBuildPlaceClicked(point);
+
+        if (buildPlaceClickedIndex === -1) {
+            addBuildingPlaceToScene(row,col, getGameLayer(LAYER_NAMES.TowerPlaceContainer))
         }
     }
 
@@ -201,7 +266,6 @@ export namespace Engine {
         enemyContainer.name = LAYER_NAMES.EnemyContainer;
 
         const containerIndex = LAYER_INDEX_MAP[LAYER_NAMES.EnemyContainer];
-        console.log('enemyContainer');
         addToGameLayer(enemyContainer, containerIndex);
     }
 
@@ -283,7 +347,13 @@ export namespace Engine {
         Engine.getApp().stage.addChildAt(child, childIndex);
     }
 
-    export const getGameLayer = (name: LAYER_NAMES) => {
+    export const getGameLayer = (name: LAYER_NAMES): Container => {
         return Engine.getApp().stage.getChildByName(name) as Container;
+    }
+
+    export const removeBuildingPlace = (id : string): void => {
+        const towerPlaceContainer: Container = Engine.getGameLayer(LAYER_NAMES.TowerPlaceContainer);
+        towerPlaceContainer.removeChild(towerPlaceContainer.getChildByName(id));
+
     }
 }

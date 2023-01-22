@@ -7,4 +7,9 @@ export const onKeyPressed = (event: any) => {
     if (event.code === 'KeyX') {
         Engine.toggleInsertMode();
     }
+
+    if (event.code === 'KeyC') {
+        Engine.toggleAddTowerMode();
+    }
+
 }

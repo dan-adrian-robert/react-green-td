@@ -6,6 +6,13 @@ import {UI_CANVAS_CONFIG} from "../config/globals";
 import {handleTileClick, handleTileMouseOver} from "../handlers/ClickHandlers";
 import {BuildSpecialGui} from "./builders";
 import {ASSET_NAMES} from "../types/image.types";
+import {BuildPlace} from "../entities/BuildPlace";
+import {getTilePosition} from "./tileUtils";
+
+export enum STORAGE_KEYS {
+    'level1'='level1',
+    'buildings'='buildings',
+}
 
 export const exportMapToJson = (gameMap: GameMap) => {
     if (!gameMap.startNode || !gameMap.endNode) {
@@ -29,11 +36,19 @@ export const exportMapToJson = (gameMap: GameMap) => {
         tileMap
     }
 
-    localStorage.setItem('level1', JSON.stringify(storage))
+    localStorage.setItem(STORAGE_KEYS.level1, JSON.stringify(storage))
+}
+
+export const exportBuildingsToJson = (buildingPlaceList: Point[] ) => {
+    const storage = {
+        buildingPlaceList: buildingPlaceList,
+    }
+
+    localStorage.setItem(STORAGE_KEYS.buildings, JSON.stringify(storage))
 }
 
 export const importMapData = (textureMap: any): Tile[][] => {
-    const storageString = localStorage.getItem('level1');
+    const storageString = localStorage.getItem(STORAGE_KEYS.level1);
 
     if (!storageString) {
         return [];
@@ -84,7 +99,7 @@ export const importMapData = (textureMap: any): Tile[][] => {
 
 export const importUIData = (): {startNode: Sprite, endNode: Sprite} | null => {
 
-    const storageString = localStorage.getItem('level1');
+    const storageString = localStorage.getItem(STORAGE_KEYS.level1);
 
     if (!storageString) {
         return null;
@@ -110,4 +125,20 @@ export const importUIData = (): {startNode: Sprite, endNode: Sprite} | null => {
         startNode,
         endNode
     };
+}
+
+export const importBuildings = (): { row: number, col: number }[] | null => {
+    const storageString = localStorage.getItem(STORAGE_KEYS.buildings);
+
+    if (!storageString) {
+        return null;
+    }
+
+    const storage = JSON.parse(storageString);
+
+    const { buildingPlaceList } = storage;
+
+    return buildingPlaceList.map((pos: Point) => {
+        return getTilePosition({pos} ,UI_CANVAS_CONFIG.size);
+    })
 }

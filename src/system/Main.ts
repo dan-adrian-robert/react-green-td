@@ -5,16 +5,18 @@ import {Container, Sprite, Texture} from "pixi.js";
 import {Engine} from "../engine/Engine";
 import {CANVAS_CONFIG, LAYER_INDEX_MAP, UI_CANVAS_CONFIG} from "../config/globals";
 import {BuildMobTextureMap, BuildSpecialGui, BuildTileMap, getMobSystemConfig} from "../utils/builders";
-import {handleTileClick, handleTileMouseOver} from "../handlers/ClickHandlers";
+import { handleTileClick, handleTileMouseOver } from "../handlers/ClickHandlers";
 import {GameMap} from "../entities/GameMap";
-import {importMapData, importUIData} from "../utils/export.utils";
+import {importBuildings, importMapData, importUIData} from "../utils/export.utils";
 import {Point} from "../utils/pathfinder";
 import {ASSET_NAMES} from "../types/image.types";
 import {MobSystem} from "./MobSystem";
 import {ANIMATION_CONFIG_RECORD, MOB_ANIMATION, MOB_TYPE} from "../types/mobs.types";
 import findPath = Engine.findPath;
+import {addBuildingPlaceToScene} from "../utils/buildingPlace.utils";
 
 export const INIT_ASSETS = async () => {
+    console.log(INIT_ASSETS.name);
     const tileMap: Record<string, Texture> = await loadAsset(AssetPaths.TILE_MAP,
                                                              ConfigMap.TILE_MAP as SpriteSheetConfig);
 
@@ -34,6 +36,7 @@ export const BUILD_ENV = () => {
     buildMap();
     buildConfigUI();
     buildMobData();
+    buildBuildings();
 }
 
 export const BUILD_SYSTEMS = (): void => {
@@ -144,6 +147,7 @@ const buildConfigUI = () => {
         boxSelectFrame: selectedSpecialSprite,
         drawMode: false,
         insertMode: false,
+        addTowerMode: false,
     }
 
     Engine.setConfigData(uiData);
@@ -173,4 +177,27 @@ const buildAnimationData = (config: SpriteSheetConfig, assetName: ASSET_NAMES, m
     }
 
     return result;
+}
+
+const buildBuildings = () => {
+    const buildingPlaceList: { row: number, col: number }[] | null =  importBuildings();
+    console.log('buildingPlaceList: ', buildingPlaceList);
+
+    if (!buildingPlaceList) {
+        return;
+    }
+
+    //Create the TowerPlace Container
+    const buildingPlaceContainer = new Container();
+    buildingPlaceContainer.name = LAYER_NAMES.TowerPlaceContainer;
+
+    buildingPlaceList.map((buildingPlace) => {
+        const {row, col} = buildingPlace;
+        addBuildingPlaceToScene(row, col,buildingPlaceContainer)
+        return null;
+    });
+
+    //Add the TowerPlace Container
+    Engine.addBuildingPlaceContainer(buildingPlaceContainer);
+
 }

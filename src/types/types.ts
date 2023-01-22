@@ -48,6 +48,7 @@ export type ConfigUiData = {
     boxSelectFrame: Sprite,
     drawMode: boolean,
     insertMode: boolean,
+    addTowerMode: boolean,
 }
 
 export type Tile = {
@@ -67,6 +68,7 @@ export enum LAYER_NAMES {
     'MapPathContainer' = 'MapPathContainer',
     'GameContainer' = 'GameContainer',
     'EditContainer' = 'EditContainer',
+    'TowerPlaceContainer' = 'TowerPlaceContainer'
 }
 
 export type GameLayerMap = {

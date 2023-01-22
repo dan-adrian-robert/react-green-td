@@ -20,7 +20,8 @@ export const LAYER_INDEX_MAP: GameLayerMap = {
     //Game Map
     [LAYER_NAMES.MapContainer]: 0,
     [LAYER_NAMES.EnemyContainer]: 1,
-    [LAYER_NAMES.MapPathContainer]: 2
+    [LAYER_NAMES.MapPathContainer]: 2,
+    [LAYER_NAMES.TowerPlaceContainer]: 3
 }
 
 export const COLORS: Record<string,number> = {

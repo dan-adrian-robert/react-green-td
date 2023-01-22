@@ -21,7 +21,6 @@ function App() {
         Engine.getApp().stage.name = LAYER_NAMES.GameContainer;
         Engine.setConfigApp(new PIXI.Application({ width: UI_CANVAS_CONFIG.width, height: UI_CANVAS_CONFIG.height}));
 
-        // Engine.getConfigApp().stage.name = LAYER_NAMES.EditContainer;
         canvasRef?.current.appendChild(Engine.getApp().view);
         configCanvasRef?.current.appendChild(Engine.getConfigApp().view);
 
@@ -41,6 +40,8 @@ function App() {
                 <button onClick={() => {Engine.findPath()}}>FindPath</button>
                 <button onClick={() => {exportMapToJson(Engine.getGameMap())}}>Export</button>
                 <button onClick={() => {Engine.addMob()}}>Add Mobs</button>
+                <button onClick={() => {Engine.saveBuildingPlaceList()}}>Save Tower Location</button>
+                <button onClick={() => {Engine.logTowerPlace()}}>Print Tower Locations</button>
             </div>
             <div ref={configCanvasRef}>
             </div>
