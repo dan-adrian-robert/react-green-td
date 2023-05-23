@@ -15,6 +15,7 @@ import {BuildPlace} from "../entities/BuildPlace";
 import {BuildSystem} from "../system/BuildSystem";
 import {exportBuildingsToJson} from "../utils/export.utils";
 import {addBuildingPlaceToScene} from "../utils/buildingPlace.utils";
+import {BuildMenuSystem} from "../system/BuildMenuSystem";
 
 export namespace Engine {
     let enemyContainer: Container;
@@ -53,8 +54,32 @@ export namespace Engine {
 
     let mobsSystem: MobSystem;
     let buildSystem: BuildSystem = new BuildSystem();
+    let buildMenuSystem: BuildMenuSystem = new BuildMenuSystem();
 
-    export const addBuildingPlaceContainer = (bpContainer: Container) => {
+    let menuOpened = false;
+
+    export const buildBuildMenuSystem = (newBuildMenuSystem: BuildMenuSystem): void => {
+        buildMenuSystem = newBuildMenuSystem;
+    }
+
+
+    export const getBuildMenuSystem = (): BuildMenuSystem => {
+        return buildMenuSystem;
+    }
+
+    export const getBuildMenuContainer = (): Container => {
+        return Engine.getGameLayer(LAYER_NAMES.BuildUI);
+    }
+
+    export const toggleMenuState = () => {
+        return menuOpened = !menuOpened;
+    }
+
+    export const getMenuState = () => {
+        return menuOpened;
+    }
+
+    export const addContainerToStage = (bpContainer: Container) => {
         app.stage.addChild(bpContainer);
     }
 

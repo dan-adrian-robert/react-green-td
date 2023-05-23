@@ -6,7 +6,6 @@ import {UI_CANVAS_CONFIG} from "../config/globals";
 import {handleTileClick, handleTileMouseOver} from "../handlers/ClickHandlers";
 import {BuildSpecialGui} from "./builders";
 import {ASSET_NAMES} from "../types/image.types";
-import {BuildPlace} from "../entities/BuildPlace";
 import {getTilePosition} from "./tileUtils";
 
 export enum STORAGE_KEYS {

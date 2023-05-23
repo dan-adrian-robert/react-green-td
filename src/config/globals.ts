@@ -12,6 +12,33 @@ export const UI_CANVAS_CONFIG = {
     size: 32,
 }
 
+export const UI_ANIMATION = {
+    buildMenu: {
+        duration: 0.5
+    }
+}
+
+export const UI_POSITION = {
+    buildMenu: {
+        position: {
+            x: 844,
+            y: 0
+        },
+        size: {
+            width: 180,
+            height: 768
+        },
+        openedPosition: {
+            x: 844,
+            y: 0
+        },
+        closedPosition: {
+            x: 1024,
+            y: 0
+        }
+    }
+}
+
 export const LAYER_INDEX_MAP: GameLayerMap = {
     //ROOT
     [LAYER_NAMES.EditContainer]: 0,
@@ -21,7 +48,8 @@ export const LAYER_INDEX_MAP: GameLayerMap = {
     [LAYER_NAMES.MapContainer]: 0,
     [LAYER_NAMES.EnemyContainer]: 1,
     [LAYER_NAMES.MapPathContainer]: 2,
-    [LAYER_NAMES.TowerPlaceContainer]: 3
+    [LAYER_NAMES.TowerPlaceContainer]: 3,
+    [LAYER_NAMES.BuildUI]: 3
 }
 
 export const COLORS: Record<string,number> = {

@@ -1,0 +1,20 @@
+{"frames": {
+
+"buildMenu.png":
+{
+	"frame": {"x":0,"y":0,"w":180,"h":768},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":180,"h":768},
+	"sourceSize": {"w":180,"h":768}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "buildUI.png",
+	"format": "RGBA8888",
+	"size": {"w":180,"h":768},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a926e9270debd96d6b448644e19c41bf:ee5e5c2ef783a7065fc601c32f2e74a3:c362ac040752a03e286646ef8bbfeb19$"
+}
+}

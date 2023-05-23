@@ -1,11 +1,15 @@
 import {AssetPaths, ConfigMap} from "../Images";
 import {loadAsset} from "../utils/loaders";
 import {ConfigUiData, LAYER_NAMES, SpriteSheetConfig, Tile} from "../types/types";
-import {Container, Sprite, Texture} from "pixi.js";
+import {Container, Graphics, Sprite, Texture} from "pixi.js";
 import {Engine} from "../engine/Engine";
-import {CANVAS_CONFIG, LAYER_INDEX_MAP, UI_CANVAS_CONFIG} from "../config/globals";
+import {CANVAS_CONFIG, LAYER_INDEX_MAP, UI_CANVAS_CONFIG, UI_POSITION} from "../config/globals";
 import {BuildMobTextureMap, BuildSpecialGui, BuildTileMap, getMobSystemConfig} from "../utils/builders";
-import { handleTileClick, handleTileMouseOver } from "../handlers/ClickHandlers";
+import {
+    handleBuildMenuClick,
+    handleTileClick,
+    handleTileMouseOver
+} from "../handlers/ClickHandlers";
 import {GameMap} from "../entities/GameMap";
 import {importBuildings, importMapData, importUIData} from "../utils/export.utils";
 import {Point} from "../utils/pathfinder";
@@ -14,9 +18,11 @@ import {MobSystem} from "./MobSystem";
 import {ANIMATION_CONFIG_RECORD, MOB_ANIMATION, MOB_TYPE} from "../types/mobs.types";
 import findPath = Engine.findPath;
 import {addBuildingPlaceToScene} from "../utils/buildingPlace.utils";
+import {TOWER_CONFIG} from "../config/tower.config";
+import {TowerType} from "../entities/TowerType";
+import {BuildMenuSystem} from "./BuildMenuSystem";
 
 export const INIT_ASSETS = async () => {
-    console.log(INIT_ASSETS.name);
     const tileMap: Record<string, Texture> = await loadAsset(AssetPaths.TILE_MAP,
                                                              ConfigMap.TILE_MAP as SpriteSheetConfig);
 
@@ -26,10 +32,17 @@ export const INIT_ASSETS = async () => {
     const OgreMap: Record<string, Texture> = await loadAsset(AssetPaths.OGRE,
                                                              ConfigMap.OGRE as SpriteSheetConfig);
 
+    const TowerMap: Record<string, Texture> = await loadAsset(AssetPaths.TOWERS,
+                                                              ConfigMap.TOWERS as SpriteSheetConfig);
+
+    const Build_UI: Record<string, Texture> = await loadAsset(AssetPaths.BUILD_UI,
+                                                              ConfigMap.BUILD_UI as SpriteSheetConfig);
 
     Engine.setInTexture(ASSET_NAMES.TILE_MAP, tileMap);
     Engine.setInTexture(ASSET_NAMES.UI, UIMap);
     Engine.setInTexture(ASSET_NAMES.OGRE, OgreMap);
+    Engine.setInTexture(ASSET_NAMES.TOWERS, TowerMap);
+    Engine.setInTexture(ASSET_NAMES.BUILD_UI, Build_UI);
 }
 
 export const BUILD_ENV = () => {
@@ -37,6 +50,7 @@ export const BUILD_ENV = () => {
     buildConfigUI();
     buildMobData();
     buildBuildings();
+    buildUI();
 }
 
 export const BUILD_SYSTEMS = (): void => {
@@ -181,7 +195,6 @@ const buildAnimationData = (config: SpriteSheetConfig, assetName: ASSET_NAMES, m
 
 const buildBuildings = () => {
     const buildingPlaceList: { row: number, col: number }[] | null =  importBuildings();
-    console.log('buildingPlaceList: ', buildingPlaceList);
 
     if (!buildingPlaceList) {
         return;
@@ -198,6 +211,50 @@ const buildBuildings = () => {
     });
 
     //Add the TowerPlace Container
-    Engine.addBuildingPlaceContainer(buildingPlaceContainer);
+    Engine.addContainerToStage(buildingPlaceContainer);
 
 }
+
+const buildUI = () => {
+    const buildUiContainer = new Container();
+    const {position, size} = UI_POSITION.buildMenu;
+
+    buildUiContainer.width = size.width;
+    buildUiContainer.height = size.height;
+    buildUiContainer.position = position;
+
+    buildUiContainer.name = LAYER_NAMES.BuildUI;
+
+    const textureMap = Engine.getTextureMap();
+    const buildMap = textureMap[ASSET_NAMES.BUILD_UI];
+
+    const { buildMenu } = buildMap;
+
+    const buildBackground = Sprite.from(buildMenu);
+    buildBackground.interactive = true;
+    buildBackground.buttonMode = true;
+
+    // buildBackground.position = position;
+    buildBackground.width = size.width;
+    buildBackground.height = size.height;
+    buildUiContainer.addChild(buildBackground);
+
+    buildBackground.on('pointerdown', () => {
+        handleBuildMenuClick({});
+    })
+
+    Engine.addContainerToStage(buildUiContainer);
+
+    const bs: BuildMenuSystem = Engine.getBuildMenuSystem();
+    bs.buildTowerList();
+
+    // towerList.map((towerTexture: Texture, index: number) => {
+    //     const towerImage: Sprite = Sprite.from(towerTexture);
+    //     towerImage.position.y = 20 + 150 * index;
+    //     towerImage.position.x = 30;
+    //     towerImage.width = 100;
+    //     towerImage.height = 150;
+    //     buildBackground.addChild(towerImage);
+    // })
+}
+

@@ -1,10 +1,13 @@
 import {Engine} from "../engine/Engine";
+import {buildMenuSlideIn, buildMenuSlideOut} from "../utils/ui.utils";
 
 export const handleTileClick = (sprite: any, metadata: any ) => {
     const editMode = !Engine.getConfigData().drawMode;
     const insertMode =  Engine.getConfigData().insertMode;
 
     const addTowerMode: boolean = Engine.getConfigData().addTowerMode;
+
+    console.log('handleTileClick', insertMode);
 
     if (insertMode) {
         Engine.setNodes(sprite.position, metadata);
@@ -16,6 +19,8 @@ export const handleTileClick = (sprite: any, metadata: any ) => {
         Engine.addTowerPlace(metadata);
         return;
     }
+
+    buildMenuSlideOut(Engine.getBuildMenuContainer());
 
     handleInGameClick(metadata)
 }
@@ -29,5 +34,9 @@ export const handleInGameClick = (metadata: any) => {
 }
 
 export const handleBuildingPlaceClick = (metadata: any) => {
-   console.log('Handle tower click', metadata);
+    buildMenuSlideIn(Engine.getBuildMenuContainer());
+}
+
+export const handleBuildMenuClick = (metadata: any): void => {
+    console.log('build Menu is clicked');
 }
