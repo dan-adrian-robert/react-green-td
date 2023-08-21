@@ -1,7 +1,7 @@
 import {AssetPaths, ConfigMap} from "../Images";
 import {loadAsset} from "../utils/loaders";
 import {ConfigUiData, LAYER_NAMES, SpriteSheetConfig, Tile} from "../types/types";
-import {Container, Graphics, Sprite, Texture} from "pixi.js";
+import {Container, Sprite, Texture} from "pixi.js";
 import {Engine} from "../engine/Engine";
 import {CANVAS_CONFIG, LAYER_INDEX_MAP, UI_CANVAS_CONFIG, UI_POSITION} from "../config/globals";
 import {BuildMobTextureMap, BuildSpecialGui, BuildTileMap, getMobSystemConfig} from "../utils/builders";
@@ -18,8 +18,6 @@ import {MobSystem} from "./MobSystem";
 import {ANIMATION_CONFIG_RECORD, MOB_ANIMATION, MOB_TYPE} from "../types/mobs.types";
 import findPath = Engine.findPath;
 import {addBuildingPlaceToScene} from "../utils/buildingPlace.utils";
-import {TOWER_CONFIG} from "../config/tower.config";
-import {TowerType} from "../entities/TowerType";
 import {BuildMenuSystem} from "./BuildMenuSystem";
 
 export const INIT_ASSETS = async () => {

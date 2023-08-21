@@ -2,6 +2,7 @@ import {Container, Sprite} from "pixi.js";
 import {Point} from "../utils/pathfinder";
 import {MOB_ANIMATION, MOB_TYPE} from "../types/mobs.types";
 import {MOB_CONTAINER_NAME} from "../config/mob.config";
+const {v4 : UUID} = require('uuid');
 
 export class Mob {
     container: Container;
@@ -11,6 +12,7 @@ export class Mob {
     type: MOB_TYPE;
     walking: boolean;
     speed: number;
+    id: string;
 
     constructor(container: Container, type: MOB_TYPE, checkpointIndex: number) {
         this.container = container
@@ -23,6 +25,7 @@ export class Mob {
 
         this.walking = true;
         this.speed = 4;
+        this.id = UUID();
     }
 
     getMobSprite():Sprite {

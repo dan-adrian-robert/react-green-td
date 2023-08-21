@@ -8,6 +8,7 @@ import {ANIMATION_LOOP, GAME_LOOP} from "./system/GameLoop";
 import {onKeyPressed} from "./handlers/KeyHandlers";
 import {exportMapToJson} from "./utils/export.utils";
 import {LAYER_NAMES} from "./types/types";
+import {Box, Button} from "@mui/material";
 
 // @ts-ignore
 window["PIXI"] = PIXI;
@@ -36,13 +37,19 @@ function App() {
 
     return (
         <div className="mainView"  onKeyDown={onKeyPressed} tabIndex={-1}>
-            <div>
-                <button onClick={() => {Engine.findPath()}}>FindPath</button>
-                <button onClick={() => {exportMapToJson(Engine.getGameMap())}}>Export</button>
-                <button onClick={() => {Engine.addMob()}}>Add Mobs</button>
-                <button onClick={() => {Engine.saveBuildingPlaceList()}}>Save Tower Location</button>
-                <button onClick={() => {Engine.logTowerPlace()}}>Print Tower Locations</button>
-            </div>
+            <Box display={'flex'} gap={'8px'}>
+                <Button variant='contained' onClick={() => {Engine.findPath()}}>FindPath</Button>
+                <Button variant='contained' onClick={() => {exportMapToJson(Engine.getGameMap())}}>Export</Button>
+                <Button variant='contained' onClick={() => {Engine.saveBuildingPlaceList()}}>Save Tower Location</Button>
+
+            </Box>
+            <Box display={'flex'} gap={'8px'}>
+                <Button variant='contained' onClick={() => {Engine.addMob()}}>Add Mobs</Button>
+                <Button variant='contained' onClick={() => {Engine.logMobs()}}>Log Mobs</Button>
+            </Box>
+            <Box display={'flex'} gap={'8px'}>
+                <Button variant='contained' onClick={() => {Engine.logTowerPlace()}}>Log Tower Locations</Button>
+            </Box>
             <div ref={configCanvasRef}>
             </div>
             <div ref={canvasRef}>

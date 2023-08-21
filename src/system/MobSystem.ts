@@ -4,6 +4,9 @@ import {getDeltaDistance, getPointCenter} from "../utils/tileUtils";
 import {Point} from "../utils/pathfinder";
 import {MOB_ANIMATION} from "../types/mobs.types";
 import {UI_CANVAS_CONFIG} from "../config/globals";
+import {Container} from "pixi.js";
+import {LAYER_NAMES} from "../types/types";
+import getGameLayer = Engine.getGameLayer;
 
 export class MobSystem {
     minDistance = 4;
@@ -78,6 +81,8 @@ export class MobSystem {
             if (distance.x <= this.minDistance && distance.y <= this.minDistance) {
                if ( mob.checkpointIndex === path.length -1) {
                    console.log('delete mob and damage the base');
+                   console.log(mob.id);
+                   this.removeMob(mob.id);
                } else {
                    mob.checkpointIndex +=1;
                    const nextCp: Point = path[mob.checkpointIndex];
@@ -129,6 +134,7 @@ export class MobSystem {
         }
 
         Engine.getMobList().map((mob: Mob) => {
+            console.log('render');
             if (!mob.walking) {
                 return null;
             }
@@ -140,5 +146,16 @@ export class MobSystem {
             mob.getMobSprite().texture = animationTextureList[mob.animationIndex];
             return null;
         })
+    }
+
+    removeMob(id: string): void {
+        const mobIndex= Engine.getMobList().findIndex((mob)=> {
+            return mob.id === id;
+        })
+
+        const mobContainer: Container = getGameLayer(LAYER_NAMES.EnemyContainer);
+        mobContainer.removeChild(Engine.getMobList()[mobIndex].container);
+
+        Engine.removeMob(mobIndex);
     }
 }

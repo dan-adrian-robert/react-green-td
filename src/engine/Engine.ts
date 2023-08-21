@@ -62,7 +62,6 @@ export namespace Engine {
         buildMenuSystem = newBuildMenuSystem;
     }
 
-
     export const getBuildMenuSystem = (): BuildMenuSystem => {
         return buildMenuSystem;
     }
@@ -117,6 +116,10 @@ export namespace Engine {
 
     export const getMobList = () => {
         return mobList;
+    }
+
+    export const removeMob = (index: number): void => {
+        mobList.splice(index, 1);
     }
 
     export const getMobTextureMap = () => {
@@ -184,18 +187,23 @@ export namespace Engine {
         console.log(Engine.getBuildPlaceList());
     }
 
+    export const logMobs = () => {
+        console.log(Engine.getMobList());
+    }
+
     export const toggleEditMode = (): void => {
         configData.drawMode = !configData.drawMode;
+        console.log(`edit mode is not ${configData.drawMode}`)
     }
 
     export const toggleInsertMode = (): void => {
         configData.insertMode = !configData.insertMode;
+        console.log(`insertMode mode is not ${configData.insertMode}`)
     }
 
     export const toggleAddTowerMode = (): void => {
         configData.addTowerMode = !configData.addTowerMode;
     }
-
 
     export const getGameMap = (): GameMap => {
         return gameMap;
