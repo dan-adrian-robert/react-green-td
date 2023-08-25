@@ -25,7 +25,6 @@ export class BuildMenuSystem {
 
         const buildUIContainer: Container = Engine.getGameLayer(LAYER_NAMES.BuildUI);
 
-
         const boxSize = {width:100, height: 100};
         const boxList = getBoxList(buildUIContainer, boxSize,30,4,30);
 
@@ -58,9 +57,9 @@ export class BuildMenuSystem {
             obj.drawRect(0, 0, boxSize.width, boxSize.height);
             towerContainer.addChild(obj);
 
-            // towerContainer.addChild(towerSprite);
-            // towerContainer.addChild(text);
-            // towerContainer.parent = buildUIContainer;
+            towerContainer.addChild(towerSprite);
+            towerContainer.addChild(text);
+            towerContainer.parent = buildUIContainer;
 
             towerContainer.addChild(text);
             //

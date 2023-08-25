@@ -277,7 +277,7 @@ export namespace Engine {
         configData = newConfigData;
     }
 
-    export const getConfigData = () => {
+    export const getConfigData = (): ConfigUiData => {
         return configData;
     }
 
