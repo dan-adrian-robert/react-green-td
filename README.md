@@ -28,6 +28,7 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 Z - toggle Edit mode.\
 Z - toggle Insert Mode.\
 C - toggle Add Tower Mode.\
+V - toggle Add Tower Place Mode.\
 
 ## Learn More
 

@@ -1,4 +1,4 @@
-import { Engine } from "../engine/Engine";
+import {Engine} from "../engine/Engine";
 
 export const onKeyPressed = (event: any) => {
     if (event.code === 'KeyZ') {
@@ -10,6 +10,10 @@ export const onKeyPressed = (event: any) => {
 
     if (event.code === 'KeyC') {
         Engine.toggleAddTowerMode();
+    }
+
+    if (event.code === 'KeyV') {
+        Engine.toggleAddTowerPlaceMode();
     }
 
 }

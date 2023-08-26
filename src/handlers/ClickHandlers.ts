@@ -1,13 +1,14 @@
 import {Engine} from "../engine/Engine";
 import {buildMenuSlideIn, buildMenuSlideOut} from "../utils/ui.utils";
+import {addBuildingPlaceToScene} from "../utils/buildingPlace.utils";
+import {LAYER_NAMES} from "../types/types";
 
 export const handleTileClick = (sprite: any, metadata: any ) => {
     const editMode = !Engine.getConfigData().drawMode;
     const insertMode =  Engine.getConfigData().insertMode;
 
     const addTowerMode: boolean = Engine.getConfigData().addTowerMode;
-
-    console.log('handleTileClick', insertMode);
+    const addBuildingPlace: boolean = Engine.getConfigData().addTowerPlaceMode;
 
     if (insertMode) {
         Engine.setNodes(sprite.position, metadata);
@@ -17,6 +18,13 @@ export const handleTileClick = (sprite: any, metadata: any ) => {
 
     if (addTowerMode) {
         Engine.addTowerPlace(metadata);
+        return;
+    }
+
+    if(addBuildingPlace) {
+        const {row, col} = metadata;
+        const buildingPlaceLayer = Engine.getGameLayer(LAYER_NAMES.TowerPlaceContainer)
+        addBuildingPlaceToScene(row, col, buildingPlaceLayer);
         return;
     }
 

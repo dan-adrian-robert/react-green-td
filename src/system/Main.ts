@@ -160,6 +160,7 @@ const buildConfigUI = () => {
         drawMode: false,
         insertMode: false,
         addTowerMode: false,
+        addTowerPlaceMode: false,
     }
 
     Engine.setConfigData(uiData);
@@ -192,10 +193,11 @@ const buildAnimationData = (config: SpriteSheetConfig, assetName: ASSET_NAMES, m
 }
 
 const buildBuildings = () => {
-    const buildingPlaceList: { row: number, col: number }[] | null =  importBuildings();
+    let buildingPlaceList: { row: number, col: number }[] | null =  importBuildings();
+    console.log('buildingPlaceList', buildingPlaceList);
 
     if (!buildingPlaceList) {
-        return;
+        buildingPlaceList = [];
     }
 
     //Create the TowerPlace Container
@@ -210,7 +212,6 @@ const buildBuildings = () => {
 
     //Add the TowerPlace Container
     Engine.addContainerToStage(buildingPlaceContainer);
-
 }
 
 const buildUI = () => {

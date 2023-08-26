@@ -31,8 +31,6 @@ export const DraggableCard: React.FC<IProps> = ({hide, onClose}) => {
         }, 200);
     },[]);
 
-
-
     return (
         <Draggable>
             <Box

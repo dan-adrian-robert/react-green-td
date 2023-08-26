@@ -36,6 +36,7 @@ export namespace Engine {
         drawMode: false,
         insertMode: false,
         addTowerMode: false,
+        addTowerPlaceMode: false,
     }
 
     let gameMap: GameMap = new GameMap([]);
@@ -203,6 +204,10 @@ export namespace Engine {
 
     export const toggleAddTowerMode = (): void => {
         configData.addTowerMode = !configData.addTowerMode;
+    }
+
+    export const toggleAddTowerPlaceMode = (): void => {
+        configData.addTowerPlaceMode = !configData.addTowerPlaceMode;
     }
 
     export const getGameMap = (): GameMap => {

@@ -49,6 +49,7 @@ export type ConfigUiData = {
     drawMode: boolean,
     insertMode: boolean,
     addTowerMode: boolean,
+    addTowerPlaceMode: boolean,
 }
 
 export type Tile = {
