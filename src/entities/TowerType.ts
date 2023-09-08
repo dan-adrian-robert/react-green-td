@@ -1,9 +1,10 @@
 import {Container} from "pixi.js";
+import {TowerTypes} from "../config/tower.config";
 const {v4 : UUID} = require('uuid');
 
 export class TowerType {
     container: Container;
-    type: TowerType;
+    type: TowerTypes;
     name: string;
     price: number;
     containerId: string;

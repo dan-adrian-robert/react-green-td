@@ -70,7 +70,8 @@ export enum LAYER_NAMES {
     'GameContainer' = 'GameContainer',
     'EditContainer' = 'EditContainer',
     'TowerPlaceContainer' = 'TowerPlaceContainer',
-    'BuildUI' = 'BuildUI'
+    'BuildUI' = 'BuildUI',
+    'TowerContainer' = 'TowerContainer'
 }
 
 export type GameLayerMap = {

@@ -10,12 +10,14 @@ import {MobSystem} from "../system/MobSystem";
 import {MOB_CONTAINER_NAME} from "../config/mob.config";
 import { Text } from 'pixi.js';
 import {ITextStyle} from "@pixi/text";
-import { getPointCenter } from "../utils/tileUtils";
+import {getPointCenter, getPointFromTilePosition} from "../utils/tileUtils";
 import {BuildPlace} from "../entities/BuildPlace";
 import {BuildSystem} from "../system/BuildSystem";
 import {exportBuildingsToJson} from "../utils/export.utils";
 import {addBuildingPlaceToScene} from "../utils/buildingPlace.utils";
 import {BuildMenuSystem} from "../system/BuildMenuSystem";
+import {TowerSystem} from "../system/TowerSystem";
+import {Tower} from "../entities/Tower";
 
 export namespace Engine {
     let enemyContainer: Container;
@@ -43,6 +45,7 @@ export namespace Engine {
     let mobList: Array<Mob> = [];
 
      let buildPlaceList: Array<BuildPlace> = [];
+     let towerList: Array<Tower> = [];
 
     let mobTextureMap: MOB_TEXTURE_MAP = {
         OGRE: {
@@ -56,8 +59,27 @@ export namespace Engine {
     let mobsSystem: MobSystem;
     let buildSystem: BuildSystem = new BuildSystem();
     let buildMenuSystem: BuildMenuSystem = new BuildMenuSystem();
+    let towerSystem: TowerSystem = new TowerSystem();
 
     let menuOpened = false;
+    let selectedBuildingPlace: string | null = null;
+
+    export const setSelectedBuildingPlace = (newSelectedBuildingPlace: string | null): void => {
+        selectedBuildingPlace = newSelectedBuildingPlace;
+    }
+    export const getSelectedBuildingPlace = ()=> {
+        return selectedBuildingPlace;
+    }
+
+    export const logEverything = () => {
+        console.log('configData: ', configData)
+        console.log('gameMap: ', gameMap)
+        console.log('mobList: ', mobList)
+        console.log('buildPlaceList: ', buildPlaceList)
+        console.log('towerList: ', towerList)
+        console.log('mobTextureMap: ', mobTextureMap)
+        console.log('menuOpened: ', menuOpened)
+    }
 
     export const buildBuildMenuSystem = (newBuildMenuSystem: BuildMenuSystem): void => {
         buildMenuSystem = newBuildMenuSystem;
@@ -83,12 +105,28 @@ export namespace Engine {
         app.stage.addChild(bpContainer);
     }
 
+    export const getTowerSystem = (): TowerSystem => {
+        return towerSystem;
+    }
+
+    export const getTowerList = (): Array<Tower> => {
+       return towerList;
+    }
+
+    export const addTower = (tower: Tower): void => {
+        towerList.push(tower);
+    }
+
     export const getBuildSystem = (): BuildSystem => {
         return buildSystem;
     }
 
     export const getBuildPlaceList = (): Array<BuildPlace> => {
         return buildPlaceList;
+    }
+
+    export const setBuildPlaceList = (newList: Array<BuildPlace>): void => {
+        buildPlaceList = newList;
     }
 
     export const addBuildPlace = (buildPlace: BuildPlace): void => {
@@ -239,7 +277,11 @@ export namespace Engine {
         const buildPlaceClickedIndex: number = Engine.getBuildSystem().getBuildPlaceClicked(point);
 
         if (buildPlaceClickedIndex === -1) {
-            addBuildingPlaceToScene(row,col, getGameLayer(LAYER_NAMES.TowerPlaceContainer))
+            const bpPosition: Point = getPointFromTilePosition({row, col});
+
+            const bp: BuildPlace = new BuildPlace(bpPosition);
+
+            addBuildingPlaceToScene(bpPosition, bp, getGameLayer(LAYER_NAMES.TowerPlaceContainer))
         }
     }
 

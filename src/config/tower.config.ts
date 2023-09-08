@@ -93,6 +93,13 @@ const MagicTowerConfig = {
     }
 }
 
+export const TOWER_TYPE_ASSET_MAP: any = {
+    [TowerTypes.FireTower]: 'fire_t1',
+    [TowerTypes.IceTower]: 'ice_t1',
+    [TowerTypes.OrbTower]: 'orb_t1',
+    [TowerTypes.MagicTower]: 'magic_t1',
+}
+
 export const TOWER_CONFIG: any = {
     ['ice_t1']: IceTowerConfig,
     ['fire_t1']: FireTowerConfig,

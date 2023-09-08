@@ -3,13 +3,14 @@ import {UI_ANIMATION, UI_POSITION} from "../config/globals";
 import gsap from "gsap";
 import {Engine} from "../engine/Engine";
 
-export const buildMenuSlideIn = (container: Container): void => {
+export const buildMenuSlideIn = (container: Container, bpTarget: string): void => {
     const position = UI_POSITION.buildMenu.openedPosition;
     const duration = UI_ANIMATION.buildMenu.duration;
 
     gsap.timeline()
         .to(container.position, {duration, ...position} )
         .call(() => {
+            Engine.setSelectedBuildingPlace(bpTarget);
             Engine.toggleMenuState();
         });
 }
@@ -21,6 +22,7 @@ export const buildMenuSlideOut = (container: Container): void => {
     gsap.timeline()
         .to(container.position, {duration, ...position} )
         .call(() => {
+            Engine.setSelectedBuildingPlace(null);
             Engine.toggleMenuState();
         });
 }

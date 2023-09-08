@@ -17,8 +17,10 @@ import {ASSET_NAMES} from "../types/image.types";
 import {MobSystem} from "./MobSystem";
 import {ANIMATION_CONFIG_RECORD, MOB_ANIMATION, MOB_TYPE} from "../types/mobs.types";
 import findPath = Engine.findPath;
-import {addBuildingPlaceToScene} from "../utils/buildingPlace.utils";
 import {BuildMenuSystem} from "./BuildMenuSystem";
+import {BuildPlace} from "../entities/BuildPlace";
+import {getPointFromTilePosition} from "../utils/tileUtils";
+import {addBuildingPlaceToScene} from "../utils/buildingPlace.utils";
 
 export const INIT_ASSETS = async () => {
     const tileMap: Record<string, Texture> = await loadAsset(AssetPaths.TILE_MAP,
@@ -49,6 +51,7 @@ export const BUILD_ENV = () => {
     buildMobData();
     buildBuildings();
     buildUI();
+    buildTowers();
 }
 
 export const BUILD_SYSTEMS = (): void => {
@@ -192,26 +195,33 @@ const buildAnimationData = (config: SpriteSheetConfig, assetName: ASSET_NAMES, m
     return result;
 }
 
-const buildBuildings = () => {
-    let buildingPlaceList: { row: number, col: number }[] | null =  importBuildings();
-    console.log('buildingPlaceList', buildingPlaceList);
+const buildBuildings = (): void => {
+    let buildingPlacePositions: { row: number, col: number }[] | null = importBuildings();
 
-    if (!buildingPlaceList) {
-        buildingPlaceList = [];
+    if (!buildingPlacePositions) {
+        buildingPlacePositions = [];
     }
 
     //Create the TowerPlace Container
     const buildingPlaceContainer = new Container();
     buildingPlaceContainer.name = LAYER_NAMES.TowerPlaceContainer;
 
-    buildingPlaceList.map((buildingPlace) => {
-        const {row, col} = buildingPlace;
-        addBuildingPlaceToScene(row, col,buildingPlaceContainer)
-        return null;
+
+    const buildingPlaces: Array<BuildPlace> = [];
+
+    buildingPlacePositions.forEach((buildingPlace) => {
+        const bpPosition: Point = getPointFromTilePosition(buildingPlace);
+
+        const bp: BuildPlace = new BuildPlace(bpPosition);
+        buildingPlaces.push(bp);
+
+        addBuildingPlaceToScene(bpPosition, bp, buildingPlaceContainer)
     });
 
-    //Add the TowerPlace Container
-    Engine.addContainerToStage(buildingPlaceContainer);
+    Engine.setBuildPlaceList(buildingPlaces);
+
+    const containerIndex = LAYER_INDEX_MAP.TowerPlaceContainer;
+    Engine.addToGameLayer(buildingPlaceContainer, containerIndex)
 }
 
 const buildUI = () => {
@@ -255,5 +265,22 @@ const buildUI = () => {
     //     towerImage.height = 150;
     //     buildBackground.addChild(towerImage);
     // })
+}
+
+const buildTowers = (): void => {
+    const towerContainer = new Container();
+    towerContainer.name = LAYER_NAMES.TowerContainer;
+
+    // let backgroundImage = new Graphics();
+    // backgroundImage.name = 'background';
+    // backgroundImage.beginFill(0xff0000);
+    // backgroundImage.drawRect(0, 0, 860, 560);
+    //
+    // towerContainer.interactive = true;
+    // towerContainer.addChild(backgroundImage);
+
+    //TODO FIX THE TOWER LAYER
+    const containerIndex = LAYER_INDEX_MAP.TowerContainer;
+    Engine.addToGameLayer(towerContainer, containerIndex)
 }
 

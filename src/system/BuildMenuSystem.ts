@@ -5,13 +5,9 @@ import {TOWER_CONFIG} from "../config/tower.config";
 import {Container, Sprite, Texture, Text, TextStyle, Graphics} from "pixi.js";
 import {LAYER_NAMES} from "../types/types";
 import {getBoxList} from "../utils/ui.utils";
+import {TowerType} from "../entities/TowerType";
 
 export class BuildMenuSystem {
-    buildPlaceSize = 64;
-
-    buildTowerTypes = () => {
-
-    }
 
     buildTowerList = (): void => {
         const textureMap = Engine.getTextureMap();
@@ -42,30 +38,40 @@ export class BuildMenuSystem {
 
             towerSprite.width = size.width;
             towerSprite.height = size.height;
+            towerSprite.name = 'tower';
 
             const style = new TextStyle({
                 fontFamily: ['Helvetica', 'Arial', 'sans-serif'],
                 fontSize:18,
             });
-            let text = new Text(assetName,style)
 
+            let textContainer = new Text(assetName,style);
+            textContainer.name = 'towerNameText'
 
             const towerContainer:Container = new Container();
+            towerContainer.name = towerName;
             towerContainer.position = position;
-            let obj = new Graphics();
-            obj.beginFill(0xff0000);
-            obj.drawRect(0, 0, boxSize.width, boxSize.height);
-            towerContainer.addChild(obj);
+
+            let backgroundImage = new Graphics();
+            backgroundImage.name = 'background';
+            backgroundImage.beginFill(0xff0000);
+            backgroundImage.drawRect(0, 0, boxSize.width, boxSize.height);
+
+            towerContainer.interactive = true;
+            towerContainer.addChild(backgroundImage);
 
             towerContainer.addChild(towerSprite);
-            towerContainer.addChild(text);
+            towerContainer.addChild(textContainer);
             towerContainer.parent = buildUIContainer;
 
-            towerContainer.addChild(text);
-            //
-            // config.data.container = towerContainer;
-            // const towerType: TowerType = new TowerType(config);
-            //
+
+            config.data.container = towerContainer;
+            const towerType: TowerType = new TowerType(config);
+
+            towerContainer.on('click', () => {
+                Engine.getTowerSystem().addTower(towerType.type);
+            })
+
             buildUIContainer.addChild(towerContainer);
             return null;
         })

@@ -6,6 +6,7 @@ export const getGameDebugInfo = () => {
     const layerNamesList = Engine.getApp().stage.children.map((stage) => stage.name);
     const layerText = layerNamesList.reduce((accumulator, currentValue) => accumulator + ` ${currentValue}`, '');
 
+    const bpIdList = Engine.getBuildPlaceList().map(item => item.id);
 
     return {
         configData:{
@@ -19,8 +20,11 @@ export const getGameDebugInfo = () => {
         },
         debuggerInfo:{
             mobList: Engine.getMobList().length,
+            towerList: Engine.getTowerList().length,
             menuOpened: Engine.getMenuState(),
-            buildPlaceList: Engine.getBuildPlaceList().length
+            buildPlaceListSize: Engine.getBuildPlaceList().length,
+            buildingPlaceList: '',
+            selectedBuildingPlace: Engine.getSelectedBuildingPlace(),
         },
         layers: {
             gameLayers: layerText,

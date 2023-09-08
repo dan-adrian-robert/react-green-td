@@ -52,10 +52,12 @@ export const DraggableCard: React.FC<IProps> = ({hide, onClose}) => {
                     <Button variant='outlined' onClick={() => {Engine.logTowerPlace()}}>Log Tower Locations</Button>
                 </Box>
                 <Box display={'flex'} gap={'8px'}>
-
                     <Button variant='outlined' onClick={() => {Engine.findPath()}}>FindPath</Button>
-                    <Button variant='outlined' onClick={() => {exportMapToJson(Engine.getGameMap())}}>Export</Button>
+                    <Button variant='outlined' onClick={() => {exportMapToJson(Engine.getGameMap())}}>Export Map</Button>
                     <Button variant='outlined' onClick={() => {Engine.saveBuildingPlaceList()}}>Save Tower Location</Button>
+                </Box>
+                <Box display={'flex'} gap={'8px'}>
+                    <Button variant='outlined' onClick={() => {Engine.logEverything()}}>Log Everything</Button>
                 </Box>
 
             </Box>

@@ -1,10 +1,18 @@
 import {Node, Point} from './pathfinder';
+import {UI_CANVAS_CONFIG} from "../config/globals";
 
 export const getTilePosition = (node: Node, tileSize: number) => {
     const col: number = Math.floor(node.pos.x / tileSize);
     const row: number = Math.floor(node.pos.y / tileSize);
 
     return {col, row};
+}
+
+export const getPointFromTilePosition = (pos:{row: number, col: number}): Point => {
+    return {
+        x: pos.col * UI_CANVAS_CONFIG.size,
+        y: pos.row * UI_CANVAS_CONFIG.size,
+    }
 }
 
 export const distanceBetweenPoints = (

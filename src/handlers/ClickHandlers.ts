@@ -2,6 +2,9 @@ import {Engine} from "../engine/Engine";
 import {buildMenuSlideIn, buildMenuSlideOut} from "../utils/ui.utils";
 import {addBuildingPlaceToScene} from "../utils/buildingPlace.utils";
 import {LAYER_NAMES} from "../types/types";
+import {Point} from "../utils/pathfinder";
+import {getPointFromTilePosition} from "../utils/tileUtils";
+import {BuildPlace} from "../entities/BuildPlace";
 
 export const handleTileClick = (sprite: any, metadata: any ) => {
     const editMode = !Engine.getConfigData().drawMode;
@@ -22,9 +25,13 @@ export const handleTileClick = (sprite: any, metadata: any ) => {
     }
 
     if(addBuildingPlace) {
-        const {row, col} = metadata;
         const buildingPlaceLayer = Engine.getGameLayer(LAYER_NAMES.TowerPlaceContainer)
-        addBuildingPlaceToScene(row, col, buildingPlaceLayer);
+
+        const bpPosition: Point = getPointFromTilePosition(metadata);
+
+        const bp: BuildPlace = new BuildPlace(bpPosition);
+
+        addBuildingPlaceToScene(bpPosition, bp, buildingPlaceLayer);
         return;
     }
 
@@ -41,8 +48,8 @@ export const handleInGameClick = (metadata: any) => {
     console.log(metadata);
 }
 
-export const handleBuildingPlaceClick = (metadata: any) => {
-    buildMenuSlideIn(Engine.getBuildMenuContainer());
+export const handleBuildingPlaceClick = (metadata: {position: any, id: string}) => {
+    buildMenuSlideIn(Engine.getBuildMenuContainer(), metadata.id);
 }
 
 export const handleBuildMenuClick = (metadata: any): void => {
